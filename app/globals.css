@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --altive-700: #0B3B5F;
+  --altive-500: #2E86AB;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+}
+
+/* Suaviza scrollbars en textareas */
+textarea {
+  resize: vertical;
+}
+
+/* Campos de formulario reutilizables */
+.field-label {
+  @apply mb-1.5 block text-xs font-semibold text-slate-600;
+}
+
+.field-input {
+  @apply w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800
+    placeholder:text-slate-300 shadow-sm outline-none transition
+    focus:border-altive-400 focus:ring-2 focus:ring-altive-100;
+}
