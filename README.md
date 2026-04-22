@@ -139,3 +139,4 @@ Para datos de volumen real, conecta DataForSEO o Google Keyword Planner en `lib/
 ---
 
 Hecho con 💙 por Altive
+# seo-tool
