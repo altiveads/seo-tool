@@ -50,13 +50,15 @@ export async function runPipeline(jobId: string, input: AuditInput) {
     const seeds = defaultSeeds({ clientName: input.clientName, city: input.city, services });
     const kwResults = await expandKeywords(seeds, { deep: false });
 
-    // 3. Claude: auditoría SEO (JSON narrativo estilo Vera)
-    updateJob(jobId, { status: 'analyzing', progress: 35, step: 'Generando auditoría SEO con IA…' });
+    // 3. Claude: auditoría SEO — 3 llamadas separadas para evitar truncado
+    updateJob(jobId, { status: 'analyzing', progress: 30, step: 'Analizando keywords y técnica SEO con IA… (1/3)' });
+    // generateAuditJson hace 3 llamadas internamente; el log de consola muestra el progreso
     const auditJson = await generateAuditJson(input, site, kwResults);
+    updateJob(jobId, { status: 'analyzing', progress: 54, step: 'Auditoría SEO completada. Generando estrategia Ads… (1/2)' });
 
-    // 4. Claude: estrategia Google Ads
-    updateJob(jobId, { status: 'analyzing', progress: 58, step: 'Generando estrategia Google Ads con IA…' });
+    // 4. Claude: estrategia Google Ads — 2 llamadas separadas
     const adsJson = await generateAdsJson(input, auditJson);
+    updateJob(jobId, { status: 'analyzing', progress: 68, step: 'Estrategia Ads completada. Generando PDFs…' });
 
     // 5. Guardar JSONs en disco para los scripts Python
     const auditJsonPath = path.join(jobDir, 'audit.json');
