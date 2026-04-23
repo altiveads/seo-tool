@@ -11,9 +11,10 @@ const FILE_NAMES: Record<string, string> = {
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string; key: string } },
+  { params }: { params: Promise<{ id: string; key: string }> },
 ) {
-  const job = getJob(params.id);
+  const { id, key } = await params;
+  const job = getJob(id);
 
   if (!job) {
     return NextResponse.json({ error: 'Job no encontrado' }, { status: 404 });
@@ -26,14 +27,14 @@ export async function GET(
     );
   }
 
-  const filePath = job.files[params.key];
+  const filePath = job.files[key];
   if (!filePath) {
     return NextResponse.json({ error: 'Archivo no encontrado' }, { status: 404 });
   }
 
   try {
     const buffer = await fs.readFile(filePath);
-    const filename = FILE_NAMES[params.key] ?? `${params.key}.pdf`;
+    const filename = FILE_NAMES[key] ?? `${key}.pdf`;
 
     return new NextResponse(buffer, {
       status: 200,

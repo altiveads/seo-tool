@@ -1,7 +1,13 @@
 import JobStatus from '@/components/JobStatus';
 import Link from 'next/link';
 
-export default function JobPage({ params }: { params: { id: string } }) {
+export default async function JobPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
   return (
     <div className="max-w-3xl mx-auto">
       <Link
@@ -15,12 +21,13 @@ export default function JobPage({ params }: { params: { id: string } }) {
         Generando tu informe…
       </h1>
       <p className="text-sm text-slate-500 mb-8">
-        Job ID: <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs">{params.id}</code>
+        Job ID:{' '}
+        <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs">{id}</code>
         <br />
         No cierres esta pestaña. Cuando termine, aparecerán los botones de descarga.
       </p>
 
-      <JobStatus jobId={params.id} />
+      <JobStatus jobId={id} />
     </div>
   );
 }

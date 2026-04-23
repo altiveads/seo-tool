@@ -1,3 +1,7 @@
+// ─── Tipos compartidos de ALTIVE TOOLS ───────────────────────────────────────
+// El pipeline usa JSON crudo (any) devuelto por Claude y lo pasa directo
+// a los scripts Python. Solo necesitamos los tipos de entrada y estado.
+
 export type Objective =
   | 'traffic'
   | 'leads'

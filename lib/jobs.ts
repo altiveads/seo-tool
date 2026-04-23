@@ -1,7 +1,18 @@
 import { randomUUID } from 'crypto';
 import type { AuditInput, JobState } from './types';
 
-const store = new Map<string, JobState>();
+// Persiste el store entre hot-reloads de Next.js en desarrollo
+declare global {
+  // eslint-disable-next-line no-var
+  var __altiveJobStore: Map<string, JobState> | undefined;
+}
+
+const store: Map<string, JobState> =
+  global.__altiveJobStore ?? new Map<string, JobState>();
+
+if (!global.__altiveJobStore) {
+  global.__altiveJobStore = store;
+}
 
 export function createJob(input: AuditInput): JobState {
   const job: JobState = {

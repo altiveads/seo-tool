@@ -1,12 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@react-pdf/renderer'],
-  },
-  // Extend serverless/route timeout for long generations (self-hosted)
-  serverRuntimeConfig: {
-    maxDuration: 300,
-  },
+  serverExternalPackages: ['@react-pdf/renderer'],
 };
 
 export default nextConfig;
