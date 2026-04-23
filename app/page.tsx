@@ -9,23 +9,25 @@ export default function HomePage() {
           🛠 Uso interno · Altive
         </div>
         <h1 className="text-3xl font-bold text-altive-700 mb-3">
-          Generador de Auditorías SEO
-          <br />y Estrategias Google Ads
+          ALTIVE TOOLS
+          <br />
+          <span className="text-2xl font-medium text-altive-500">Sistema completo de inteligencia de cliente</span>
         </h1>
         <p className="text-slate-500 max-w-xl mx-auto text-sm leading-relaxed">
-          Llena el formulario, espera ~90 segundos y descarga los 4 PDFs listos
-          para presentar: auditoría técnica, informe para el cliente, estrategia
-          de Ads para agencia y presentación de Ads para el cliente.
+          Llena el formulario, espera 3–5 minutos y descarga los 10 PDFs listos
+          para presentar: market research, auditoría SEO, estrategia Meta Ads,
+          estrategia Google Ads y roadmap integrado — versión agencia y cliente por cada módulo.
         </p>
       </div>
 
       {/* Badges de entregables */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-10">
         {[
-          { icon: '🔍', label: 'Auditoría SEO', sub: 'Agencia' },
-          { icon: '📄', label: 'Resumen Digital', sub: 'Cliente' },
-          { icon: '⚙️', label: 'Estrategia Ads', sub: 'Agencia' },
-          { icon: '🎯', label: 'Plan Publicidad', sub: 'Cliente' },
+          { icon: '🔬', label: 'Market Research', sub: 'Ag. + Cliente' },
+          { icon: '🔍', label: 'SEO Audit', sub: 'Ag. + Cliente' },
+          { icon: '📱', label: 'Meta Ads', sub: 'Ag. + Cliente' },
+          { icon: '⚙️', label: 'Google Ads', sub: 'Ag. + Cliente' },
+          { icon: '🗺️', label: 'Roadmap', sub: 'Ag. + Cliente' },
         ].map((b) => (
           <div
             key={b.label}

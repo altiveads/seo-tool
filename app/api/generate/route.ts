@@ -4,11 +4,34 @@ import { createJob } from '@/lib/jobs';
 import { runPipeline } from '@/lib/pipeline';
 
 const schema = z.object({
+  // Sección 1 — Datos del cliente
   websiteUrl: z.string().url('URL inválida'),
   clientName: z.string().min(1, 'Nombre requerido'),
   city: z.string().min(1, 'Ciudad requerida'),
   country: z.string().default('Colombia'),
+  businessType: z.string().optional(),
+  sector: z.string().optional(),
+  services: z.string().optional(),
+  businessDescription: z.string().optional(),
+
+  // Sección 2 — Datos comerciales
+  ticketAverage: z.string().optional(),
+  monthlyGoal: z.string().optional(),
+  differentiator: z.string().optional(),
+  knownCompetitors: z.string().optional(),
+
+  // Sección 3 — Datos de pauta
+  metaAdsBudget: z.string().optional(),
   monthlyBudgetCOP: z.number().positive().optional(),
+  campaignGoal: z.enum(['whatsapp', 'calls', 'form', 'visits']).optional(),
+  targetAudience: z.string().optional(),
+  geographicZone: z.string().optional(),
+
+  // Sección 4 — Contexto adicional
+  socialMedia: z.string().optional(),
+  internalNotes: z.string().optional(),
+
+  // Opciones heredadas
   objectives: z.array(z.string()).min(1).default(['traffic']),
   customObjective: z.string().optional(),
   competitors: z.array(z.string()).default([]),

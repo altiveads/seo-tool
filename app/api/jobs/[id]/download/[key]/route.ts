@@ -3,10 +3,16 @@ import fs from 'fs/promises';
 import { getJob } from '@/lib/jobs';
 
 const FILE_NAMES: Record<string, string> = {
-  'auditoria-seo-agencia': 'Auditoria_SEO_Agencia.pdf',
-  'auditoria-seo-cliente': 'Auditoria_SEO_Cliente.pdf',
-  'google-ads-agencia': 'Google_Ads_Estrategia_Agencia.pdf',
-  'google-ads-cliente': 'Google_Ads_Cliente.pdf',
+  'market-research-agencia': 'Market_Research_Agencia.pdf',
+  'market-research-cliente': 'Market_Research_Cliente.pdf',
+  'auditoria-seo-agencia':   'Auditoria_SEO_Agencia.pdf',
+  'auditoria-seo-cliente':   'Auditoria_SEO_Cliente.pdf',
+  'meta-ads-agencia':        'Meta_Ads_Estrategia_Agencia.pdf',
+  'meta-ads-cliente':        'Meta_Ads_Cliente.pdf',
+  'google-ads-agencia':      'Google_Ads_Estrategia_Agencia.pdf',
+  'google-ads-cliente':      'Google_Ads_Cliente.pdf',
+  'roadmap-agencia':         'Roadmap_Agencia.pdf',
+  'roadmap-cliente':         'Roadmap_Cliente.pdf',
 };
 
 export async function GET(
