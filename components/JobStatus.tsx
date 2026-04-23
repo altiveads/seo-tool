@@ -5,16 +5,29 @@ import clsx from 'clsx';
 import type { JobState } from '@/lib/types';
 
 const STEP_LABELS: Record<string, string> = {
-  queued: 'En cola',
-  scraping: 'Analizando el sitio web…',
-  keywords: 'Expandiendo keywords…',
-  analyzing: 'Generando contenido con IA…',
-  generating_pdfs: 'Renderizando PDFs…',
-  done: '¡Listo!',
-  error: 'Error',
+  queued:           'En cola',
+  market_research:  'Investigando el mercado…',
+  scraping:         'Analizando el sitio web…',
+  keywords:         'Expandiendo keywords…',
+  analyzing:        'Generando contenido con IA…',
+  meta_ads:         'Construyendo estrategia Meta Ads…',
+  roadmap:          'Generando roadmap integrado…',
+  generating_pdfs:  'Renderizando PDFs…',
+  done:             '¡Listo!',
+  error:            'Error',
 };
 
 const PDF_LABELS: Record<string, { label: string; desc: string; icon: string }> = {
+  'market-research-agencia': {
+    label: 'Market Research — Agencia',
+    desc: 'Análisis completo de mercado, demanda y competencia',
+    icon: '🔬',
+  },
+  'market-research-cliente': {
+    label: 'Market Research — Cliente',
+    desc: 'Visión del mercado para tomar mejores decisiones',
+    icon: '📊',
+  },
   'auditoria-seo-agencia': {
     label: 'Auditoría SEO — Agencia',
     desc: 'Informe técnico completo para uso interno',
@@ -22,8 +35,18 @@ const PDF_LABELS: Record<string, { label: string; desc: string; icon: string }> 
   },
   'auditoria-seo-cliente': {
     label: 'Auditoría SEO — Cliente',
-    desc: 'Versión simplificada para presentar al cliente',
+    desc: 'Diagnóstico digital en lenguaje sencillo',
     icon: '📄',
+  },
+  'meta-ads-agencia': {
+    label: 'Estrategia Meta Ads — Agencia',
+    desc: '10 copies, briefs creativos y estructura de campañas',
+    icon: '📱',
+  },
+  'meta-ads-cliente': {
+    label: 'Meta Ads — Cliente',
+    desc: 'Explicación del plan de pauta en redes sociales',
+    icon: '📣',
   },
   'google-ads-agencia': {
     label: 'Estrategia Google Ads — Agencia',
@@ -32,8 +55,18 @@ const PDF_LABELS: Record<string, { label: string; desc: string; icon: string }> 
   },
   'google-ads-cliente': {
     label: 'Google Ads — Cliente',
-    desc: 'Explicación sencilla del plan de publicidad',
+    desc: 'Plan de publicidad en Google en lenguaje simple',
     icon: '🎯',
+  },
+  'roadmap-agencia': {
+    label: 'Roadmap Integrado — Agencia',
+    desc: 'Plan de 3 meses con semanas, acciones y KPIs',
+    icon: '🗺️',
+  },
+  'roadmap-cliente': {
+    label: 'Roadmap — Cliente',
+    desc: 'Tu plan de crecimiento digital del próximo trimestre',
+    icon: '🚀',
   },
 };
 
@@ -59,9 +92,7 @@ export default function JobStatus({ jobId }: { jobId: string }) {
     }
 
     poll();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [jobId]);
 
   if (err) {
@@ -91,12 +122,10 @@ export default function JobStatus({ jobId }: { jobId: string }) {
           <span className="text-sm font-semibold text-slate-700">
             {STEP_LABELS[job.status] ?? job.step}
           </span>
-          <span
-            className={clsx(
-              'text-sm font-bold',
-              isDone ? 'text-green-600' : isError ? 'text-red-500' : 'text-altive-600',
-            )}
-          >
+          <span className={clsx(
+            'text-sm font-bold',
+            isDone ? 'text-green-600' : isError ? 'text-red-500' : 'text-altive-600',
+          )}>
             {job.progress}%
           </span>
         </div>
@@ -104,11 +133,7 @@ export default function JobStatus({ jobId }: { jobId: string }) {
           <div
             className={clsx(
               'h-full rounded-full transition-all duration-700',
-              isDone
-                ? 'bg-green-500'
-                : isError
-                ? 'bg-red-400'
-                : 'bg-altive-500',
+              isDone ? 'bg-green-500' : isError ? 'bg-red-400' : 'bg-altive-500',
             )}
             style={{ width: `${job.progress}%` }}
           />
@@ -129,11 +154,13 @@ export default function JobStatus({ jobId }: { jobId: string }) {
       {isDone && job.files && (
         <div className="rounded-xl border border-green-200 bg-green-50 p-6">
           <h2 className="mb-5 text-base font-bold text-green-800">
-            ✅ Los 4 PDFs están listos
+            ✅ Los 10 PDFs están listos
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {Object.keys(PDF_LABELS).map((key) => {
               const meta = PDF_LABELS[key];
+              const available = !!(job.files as Record<string, unknown>)[key];
+              if (!available) return null;
               return (
                 <a
                   key={key}
@@ -143,9 +170,7 @@ export default function JobStatus({ jobId }: { jobId: string }) {
                 >
                   <span className="text-2xl leading-none">{meta.icon}</span>
                   <div>
-                    <div className="text-sm font-semibold text-slate-800">
-                      {meta.label}
-                    </div>
+                    <div className="text-sm font-semibold text-slate-800">{meta.label}</div>
                     <div className="text-xs text-slate-500 mt-0.5">{meta.desc}</div>
                   </div>
                 </a>
@@ -160,17 +185,10 @@ export default function JobStatus({ jobId }: { jobId: string }) {
 
 function Spinner() {
   return (
-    <svg
-      className="h-4 w-4 animate-spin text-altive-500"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
+    <svg className="h-4 w-4 animate-spin text-altive-500" viewBox="0 0 24 24" fill="none">
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path
-        className="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z"
-      />
+      <path className="opacity-75" fill="currentColor"
+        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
     </svg>
   );
 }

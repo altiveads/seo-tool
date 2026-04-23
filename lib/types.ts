@@ -1,6 +1,4 @@
 // ─── Tipos compartidos de ALTIVE TOOLS ───────────────────────────────────────
-// El pipeline usa JSON crudo (any) devuelto por Claude y lo pasa directo
-// a los scripts Python. Solo necesitamos los tipos de entrada y estado.
 
 export type Objective =
   | 'traffic'
@@ -9,12 +7,41 @@ export type Objective =
   | 'conversions'
   | 'retargeting';
 
+export type CampaignGoal =
+  | 'whatsapp'
+  | 'calls'
+  | 'form'
+  | 'visits';
+
 export interface AuditInput {
+  // ── Sección 1: Datos del cliente ──────────────────────────────────────────
   websiteUrl: string;
   clientName: string;
   city: string;
   country: string;
-  monthlyBudgetCOP?: number;
+  businessType?: string;        // tipo_negocio
+  sector?: string;              // sector
+  services?: string;            // servicios_principales (texto libre)
+  businessDescription?: string; // descripcion_negocio
+
+  // ── Sección 2: Datos comerciales ──────────────────────────────────────────
+  ticketAverage?: string;       // ticket_promedio
+  monthlyGoal?: string;         // objetivo_mensual
+  differentiator?: string;      // diferencial_percibido
+  knownCompetitors?: string;    // competidores_conocidos (texto libre)
+
+  // ── Sección 3: Datos de pauta ─────────────────────────────────────────────
+  metaAdsBudget?: string;       // presupuesto_meta_ads
+  monthlyBudgetCOP?: number;    // presupuesto_google_ads (mantiene compatibilidad)
+  campaignGoal?: CampaignGoal;  // objetivo_campana
+  targetAudience?: string;      // publico_objetivo
+  geographicZone?: string;      // zona_geografica_pauta
+
+  // ── Sección 4: Contexto adicional ─────────────────────────────────────────
+  socialMedia?: string;         // redes_sociales
+  internalNotes?: string;       // notas_internas
+
+  // ── Campos heredados ──────────────────────────────────────────────────────
   objectives: Objective[];
   customObjective?: string;
   competitors?: string[];
@@ -190,9 +217,12 @@ export interface JobState {
   createdAt: number;
   status:
     | 'queued'
+    | 'market_research'
     | 'scraping'
     | 'keywords'
     | 'analyzing'
+    | 'meta_ads'
+    | 'roadmap'
     | 'generating_pdfs'
     | 'done'
     | 'error';
