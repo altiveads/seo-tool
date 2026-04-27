@@ -37,6 +37,10 @@ const schema = z.object({
   competitors: z.array(z.string()).default([]),
   includeKeywordsInStrategyPdf: z.boolean().default(true),
   generateKeywords: z.boolean().default(true),
+
+  // Configuración avanzada
+  apiKey: z.string().optional(),
+  selectedModules: z.array(z.string()).optional(),
 });
 
 export async function POST(req: NextRequest) {
