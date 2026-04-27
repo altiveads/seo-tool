@@ -47,6 +47,10 @@ export interface AuditInput {
   competitors?: string[];
   includeKeywordsInStrategyPdf: boolean;
   generateKeywords: boolean;
+
+  // ── Configuración ─────────────────────────────────────────────────────────
+  apiKey?: string;               // API key ingresada manualmente en la UI
+  selectedModules?: string[];    // módulos a generar: market-research, seo-audit, meta-ads, google-ads, roadmap
 }
 
 export interface ScrapedSite {

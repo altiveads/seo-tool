@@ -24,7 +24,48 @@ const OBJECTIVES = [
   { value: 'retargeting', label: '🔄 Retargeting / remarketing' },
 ];
 
+const MODULES = [
+  {
+    value: 'market-research',
+    label: '🔍 Market Research',
+    desc: 'Análisis del mercado, tendencias, competidores y oportunidades',
+    color: 'border-purple-200 bg-purple-50',
+    activeColor: 'border-purple-500 bg-purple-500',
+  },
+  {
+    value: 'seo-audit',
+    label: '🌐 Auditoría SEO',
+    desc: 'Análisis del sitio web, palabras clave y estrategia de posicionamiento',
+    color: 'border-blue-200 bg-blue-50',
+    activeColor: 'border-blue-500 bg-blue-500',
+  },
+  {
+    value: 'meta-ads',
+    label: '📱 Meta Ads',
+    desc: 'Estrategia de campaña Meta Ads con metodología ALTIVE (3 adsets, 10 anuncios)',
+    color: 'border-sky-200 bg-sky-50',
+    activeColor: 'border-sky-500 bg-sky-500',
+  },
+  {
+    value: 'google-ads',
+    label: '🎯 Google Ads',
+    desc: 'Estrategia completa de Google Ads con grupos, copies y presupuesto',
+    color: 'border-green-200 bg-green-50',
+    activeColor: 'border-green-500 bg-green-500',
+  },
+  {
+    value: 'roadmap',
+    label: '🗺️ Roadmap',
+    desc: 'Plan integrado de los 3 próximos meses con semanas, acciones y KPIs',
+    color: 'border-orange-200 bg-orange-50',
+    activeColor: 'border-orange-500 bg-orange-500',
+  },
+];
+
 type FormState = {
+  // Config
+  apiKey: string;
+  selectedModules: string[];
   // Sección 1 — Datos del cliente
   websiteUrl: string;
   clientName: string;
@@ -60,8 +101,11 @@ export default function AuditForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
 
   const [form, setForm] = useState<FormState>({
+    apiKey: '',
+    selectedModules: ['market-research', 'seo-audit', 'meta-ads', 'google-ads', 'roadmap'],
     websiteUrl: '',
     clientName: '',
     city: '',
@@ -101,12 +145,31 @@ export default function AuditForm() {
     }));
   }
 
+  function toggleModule(val: string) {
+    setForm(prev => ({
+      ...prev,
+      selectedModules: prev.selectedModules.includes(val)
+        ? prev.selectedModules.filter(m => m !== val)
+        : [...prev.selectedModules, val],
+    }));
+  }
+
+  function selectAllModules() {
+    setForm(prev => ({ ...prev, selectedModules: MODULES.map(m => m.value) }));
+  }
+
+  const totalPdfs = form.selectedModules.length * 2;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
 
     if (!form.websiteUrl || !form.clientName || !form.city) {
       setError('URL, nombre del cliente y ciudad son obligatorios.');
+      return;
+    }
+    if (form.selectedModules.length === 0) {
+      setError('Selecciona al menos un módulo para generar.');
       return;
     }
 
@@ -141,6 +204,8 @@ export default function AuditForm() {
           : [],
         includeKeywordsInStrategyPdf: form.includeKeywordsInStrategyPdf,
         generateKeywords: form.generateKeywords,
+        apiKey: form.apiKey || undefined,
+        selectedModules: form.selectedModules,
       };
 
       const res = await fetch('/api/generate', {
@@ -164,6 +229,96 @@ export default function AuditForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+
+      {/* ── API KEY ─────────────────────────────────────────────────────────── */}
+      <section className="rounded-xl border border-amber-200 bg-amber-50 p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-lg">🔑</span>
+          <h2 className="text-sm font-bold text-amber-800">Anthropic API Key</h2>
+          <span className="ml-auto text-xs text-amber-600">Opcional si ya está en .env.local</span>
+        </div>
+        <div className="flex gap-2">
+          <input
+            type={showApiKey ? 'text' : 'password'}
+            className="field-input flex-1 font-mono text-xs"
+            placeholder="sk-ant-api03-..."
+            value={form.apiKey}
+            onChange={e => set('apiKey', e.target.value)}
+            autoComplete="off"
+          />
+          <button
+            type="button"
+            onClick={() => setShowApiKey(v => !v)}
+            className="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm text-amber-700 hover:bg-amber-100"
+            title={showApiKey ? 'Ocultar' : 'Mostrar'}
+          >
+            {showApiKey ? '🙈' : '👁️'}
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-amber-600">
+          La key se usa solo para esta generación. Si tienes <code className="bg-amber-100 px-1 rounded">.env.local</code> configurado, deja este campo vacío.
+        </p>
+      </section>
+
+      {/* ── MÓDULOS A GENERAR ───────────────────────────────────────────────── */}
+      <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-altive-700 text-xs font-bold text-white">★</span>
+            <h2 className="text-base font-bold text-altive-700">¿Qué quieres generar?</h2>
+          </div>
+          <div className="flex gap-2">
+            <button type="button" onClick={selectAllModules}
+              className="text-xs text-altive-600 hover:text-altive-800 underline">
+              Seleccionar todo
+            </button>
+            <span className="text-slate-300">|</span>
+            <button type="button" onClick={() => set('selectedModules', [])}
+              className="text-xs text-slate-400 hover:text-slate-600 underline">
+              Limpiar
+            </button>
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {MODULES.map(mod => {
+            const active = form.selectedModules.includes(mod.value);
+            return (
+              <button
+                key={mod.value}
+                type="button"
+                onClick={() => toggleModule(mod.value)}
+                className={clsx(
+                  'rounded-xl border-2 p-4 text-left transition-all',
+                  active
+                    ? 'border-altive-500 bg-altive-50 shadow-sm'
+                    : 'border-slate-200 bg-white hover:border-slate-300',
+                )}
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className={clsx('text-sm font-bold', active ? 'text-altive-700' : 'text-slate-700')}>
+                    {mod.label}
+                  </span>
+                  <span className={clsx(
+                    'flex h-5 w-5 items-center justify-center rounded-full border-2 text-xs transition-all',
+                    active
+                      ? 'border-altive-500 bg-altive-500 text-white'
+                      : 'border-slate-300 bg-white text-transparent',
+                  )}>✓</span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed">{mod.desc}</p>
+                {active && (
+                  <div className="mt-2 text-xs font-medium text-altive-600">
+                    2 PDFs: Agencia + Cliente
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+        {form.selectedModules.length === 0 && (
+          <p className="mt-3 text-xs text-red-500">⚠️ Selecciona al menos un módulo.</p>
+        )}
+      </section>
 
       {/* ── SECCIÓN 1: DATOS DEL CLIENTE ───────────────────────────────── */}
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -302,7 +457,7 @@ export default function AuditForm() {
           </div>
         </div>
 
-        {/* Objetivos de ads (heredado) */}
+        {/* Objetivos de ads */}
         <div className="mt-5 border-t border-slate-100 pt-5">
           <p className="mb-2 text-sm font-medium text-slate-700">Objetivos de la publicidad</p>
           <p className="mb-3 text-xs text-slate-500">Selecciona todos los que apliquen.</p>
@@ -357,7 +512,7 @@ export default function AuditForm() {
               onChange={e => set('generateKeywords', e.target.checked)} />
             <div>
               <div className="font-medium text-slate-800">Generar keywords basadas en la estrategia</div>
-              <div className="text-sm text-slate-500">Claude investigará y clasificará las palabras clave por campaña usando autocompletado de Google + análisis semántico.</div>
+              <div className="text-sm text-slate-500">Claude investigará y clasificará las palabras clave por campaña.</div>
             </div>
           </label>
           <label className="flex cursor-pointer items-start gap-4">
@@ -381,20 +536,26 @@ export default function AuditForm() {
 
       <div className="flex items-center justify-between rounded-xl border border-altive-100 bg-altive-50 px-6 py-4">
         <div>
-          <div className="text-sm font-semibold text-altive-700">Se generarán 10 PDFs</div>
-          <div className="text-xs text-slate-500 mt-0.5">
-            Market Research · SEO Audit · Meta Ads · Google Ads · Roadmap — versión agencia + cliente cada uno
+          <div className="text-sm font-semibold text-altive-700">
+            {totalPdfs > 0
+              ? `Se generarán ${totalPdfs} PDF${totalPdfs !== 1 ? 's' : ''}`
+              : 'Selecciona al menos un módulo'}
           </div>
-          <div className="text-xs text-slate-400 mt-1">⏱ Tiempo estimado: 3–5 minutos</div>
+          <div className="text-xs text-slate-500 mt-0.5">
+            {form.selectedModules.map(m => MODULES.find(x => x.value === m)?.label?.split(' ').slice(1).join(' ')).filter(Boolean).join(' · ')}
+          </div>
+          <div className="text-xs text-slate-400 mt-1">
+            ⏱ Tiempo estimado: {form.selectedModules.length <= 2 ? '1–2' : form.selectedModules.length <= 4 ? '2–3' : '3–5'} minutos
+          </div>
         </div>
-        <button type="submit" disabled={loading}
+        <button type="submit" disabled={loading || form.selectedModules.length === 0}
           className={clsx(
             'rounded-lg px-6 py-3 text-sm font-bold text-white transition-all',
-            loading
+            loading || form.selectedModules.length === 0
               ? 'cursor-not-allowed bg-slate-300'
               : 'bg-altive-700 shadow-md hover:bg-altive-600 active:scale-95',
           )}>
-          {loading ? 'Iniciando...' : '🚀 Generar estrategia completa'}
+          {loading ? 'Iniciando...' : '🚀 Generar estrategia'}
         </button>
       </div>
     </form>
